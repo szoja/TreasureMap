@@ -5,6 +5,8 @@ namespace TreasureMap;
 class Model {
 
     public static $connector;
+
+    /** @var ModelAdapter\ModelAdapter */
     public static $modelAdapter;
     public $instanceAdapter;
 
@@ -36,7 +38,7 @@ class Model {
      * @return mixed
      */
     public function getAttribute($key) {
-        $inAttributes = array_key_exists($key, $this->attributes);
+        $inAttributes = array_key_exists($key, static::$modelAdapter->getFieldMap());
         // If the key references an attribute, we can just go ahead and return the
         // plain attribute value from the model. This allows every attribute to
         // be dynamically accessed through the _get method without accessors.
@@ -46,8 +48,8 @@ class Model {
         // If the key already exists in the relationships array, it just means the
         // relationship has already been loaded, so we'll just return it out of
         // here because there is no need to query within the relations twice.
-        if (array_key_exists($key, $this->relations)) {
-            return $this->relations[$key];
+        if (array_key_exists($key, static::$modelAdapter->getRelations())) {
+            return static::$modelAdapter->getRelations()[$key];
         }
         // If the "attribute" exists as a method on the model, we will just assume
         // it is a relationship and will load and return results from the query
@@ -94,8 +96,8 @@ class Model {
      * @return mixed
      */
     protected function getAttributeFromArray($key) {
-        if (array_key_exists($key, $this->attributes)) {
-            return $this->attributes[$key];
+        if (array_key_exists($key, static::$modelAdapter->getFieldMap())) {
+            return $this->{$key};
         }
     }
 
@@ -144,7 +146,7 @@ class Model {
      * @return bool
      */
     protected function hasCast($key) {
-        return array_key_exists($key, $this->casts);
+        return array_key_exists($key, static::$modelAdapter->getCasts());
     }
 
     /**
@@ -168,7 +170,7 @@ class Model {
      * @return string
      */
     protected function getCastType($key) {
-        return trim(strtolower($this->casts[$key]));
+        return trim(strtolower(static::$modelAdapter->getCasts()[$key]));
     }
 
     /**

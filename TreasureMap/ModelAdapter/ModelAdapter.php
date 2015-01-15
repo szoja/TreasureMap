@@ -7,15 +7,15 @@ class ModelAdapter implements \Interfaces\iModelAdapter {
     protected $source;
     protected $fieldMap;
     protected $localKey;
-    protected $references;
-    protected $cast;
+    protected $relations;
+    protected $casts;
 
-    function __construct($source, $fieldMap, $localKey, array $references = [], array $cast = []) {
-        $this->source = $source;
-        $this->fieldMap = $fieldMap;
-        $this->localKey = $localKey;
-        $this->references = $references;
-        $this->cast = $cast;
+    function __construct($adapterConfig) {
+        foreach ($this as $adapterKey => $adapterValue) {
+            if (isset($adapterConfig[$adapterKey])) {
+                $this->{$adapterKey} = $adapterConfig[$adapterKey];
+            }
+        }
     }
 
     public function getMapRef($variableName, $sourcePrefix = FALSE) {
@@ -36,15 +36,59 @@ class ModelAdapter implements \Interfaces\iModelAdapter {
     }
 
     public function existInCast($variableName) {
-        return (isset($this->cast[$variableName])) ? TRUE : FALSE;
+        return (isset($this->casts[$variableName])) ? TRUE : FALSE;
     }
 
     public function existInReferenceKeys($variableName) {
-        return (isset($this->references[$variableName])) ? TRUE : FALSE;
+        return (isset($this->relations[$variableName])) ? TRUE : FALSE;
     }
 
     public function addSourcePrefix($value) {
         return $this->source . "." . $value;
+    }
+
+    /*
+     * get / set
+     */
+
+    function getSource() {
+        return $this->source;
+    }
+
+    function getFieldMap() {
+        return $this->fieldMap;
+    }
+
+    function getLocalKey() {
+        return $this->localKey;
+    }
+
+    function getRelations() {
+        return $this->relations;
+    }
+
+    function getCasts() {
+        return $this->casts;
+    }
+
+    function setSource($source) {
+        $this->source = $source;
+    }
+
+    function setFieldMap($fieldMap) {
+        $this->fieldMap = $fieldMap;
+    }
+
+    function setLocalKey($localKey) {
+        $this->localKey = $localKey;
+    }
+
+    function setRelations($relations) {
+        $this->relations = $relations;
+    }
+
+    function setCasts($casts) {
+        $this->casts = $casts;
     }
 
 }

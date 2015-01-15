@@ -2,19 +2,19 @@
 
 $references = [
 
-    "test1" => [
+    "testfield1" => [
         "relation" => "hasOne",
         "relationOptions" => [
             "referenceModel" => "\User",
         ]
     ],
-    "test2" => [
+    "testfield2" => [
         "relation" => "hasMany",
         "relationOptions" => [
             "referenceModel" => "\User",
         ]
     ],
-    "test3" => [
+    "testfield3" => [
         "relation" => "hasManyToMany",
         "relationOptions" => [
             "connectorModel" => "\UserTests",
@@ -23,7 +23,7 @@ $references = [
             "referenceConnectorKey" => "tests_id"
         ]
     ],
-    "test4" => [
+    "testfield4" => [
         "relation" => "belongsTo",
         "relationOptions" => [
             "referenceModel" => "\Account",
