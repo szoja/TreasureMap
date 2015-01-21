@@ -1,6 +1,6 @@
 <?php
 
-namespace Interfaces;
+namespace TreasureMap\Interfaces;
 
 interface iModelAdapter {
     

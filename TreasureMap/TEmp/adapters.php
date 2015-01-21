@@ -16,21 +16,22 @@ $adapter = [
         "email" => "email",
         "username" => "username",
         "password" => "password",
+        "name" => "name_changed_in_db"
     ],
     //
-    "localKey" => "id",
+    "primaryKey" => "id",
     //
     "relations" => [
         "personal" => [
-            "relation" => "hasOne",
-            "relationOptions" => [
+            "type" => "hasOne",
+            "options" => [
                 "referenceModel" => "\Personal",
             ]
         ],
         "companies" => [
-            "relation" => "hasMany",
-            "relationOptions" => [
-                "referenceModel" => "\Company",
+            "type" => "hasMany",
+            "options" => [
+                "referenceModel" => "\Posts",
             ]
         ],
     ],

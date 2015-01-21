@@ -11,16 +11,20 @@ $references = [
     "testfield2" => [
         "relation" => "hasMany",
         "relationOptions" => [
+            "sourceForeignFields" => "user_id", // user FK in connector table
             "referenceModel" => "\User",
+            "referenceFields" => "id", // test ID                                       -> reference model local key
         ]
     ],
-    "testfield3" => [
+    "tests" => [
         "relation" => "hasManyToMany",
         "relationOptions" => [
+            "sourceFields" => "id", // user ID                                          -> model local KEY   
             "connectorModel" => "\UserTests",
-            "connectorKey" => "user_id",
+            "sourceConnectorFields" => "user_id", // user FK in connector table         -> Connector belognsTo SOURCE model options
+            "referenceConnectorFields" => "tests_id", // test FK in connector table     -> Connector belognsTo REFERENCE model options
             "referenceModel" => "\Tests",
-            "referenceConnectorKey" => "tests_id"
+            "referenceFields" => "id", // test ID                                       -> reference model local key
         ]
     ],
     "testfield4" => [

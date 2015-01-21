@@ -2,7 +2,9 @@
 
 namespace TreasureMap\ModelAdapter;
 
-class ModelAdapter implements \Interfaces\iModelAdapter {
+use TreasureMap\Interfaces;
+
+class ModelAdapter implements Interfaces\iModelAdapter {
 
     protected $source;
     protected $fieldMap;
@@ -10,17 +12,47 @@ class ModelAdapter implements \Interfaces\iModelAdapter {
     protected $relations;
     protected $casts;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = array();
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = array('*');
+
     function __construct($adapterConfig) {
+
+        $this->initConfiguration($adapterConfig);
+    }
+
+    public function initConfiguration($adapterConfig) {
+
+        // Set the configuration values if they exist
         foreach ($this as $adapterKey => $adapterValue) {
             if (isset($adapterConfig[$adapterKey])) {
                 $this->{$adapterKey} = $adapterConfig[$adapterKey];
             }
         }
+
+        // By Default all fields are fillable.
+        if (!isset($adapterConfig["fillableFields"])) {
+            $this->fillable = array_keys($adapterConfig["fieldMap"]);
+        }
+
+        if (!isset($adapterConfig["relations"])) {
+            $this->relations = $adapterConfig["relations"];
+        }
     }
 
-    public function getMapRef($variableName, $sourcePrefix = FALSE) {
+    public function getFieldMapRef($variableName, $sourcePrefix = FALSE) {
 
-        if ($this->existInMap($variableName)) {
+        if ($this->existInFieldMap($variableName)) {
             if ($sourcePrefix) {
                 return $this->addSourcePrefix($this->fieldMap[$variableName]);
             } else {
@@ -31,20 +63,32 @@ class ModelAdapter implements \Interfaces\iModelAdapter {
         }
     }
 
-    public function existInMap($variableName) {
+    public function existInFieldMap($variableName) {
         return (isset($this->fieldMap[$variableName])) ? TRUE : FALSE;
     }
 
-    public function existInCast($variableName) {
+    public function existInCasts($variableName) {
         return (isset($this->casts[$variableName])) ? TRUE : FALSE;
     }
 
-    public function existInReferenceKeys($variableName) {
+    public function existInRelations($variableName) {
         return (isset($this->relations[$variableName])) ? TRUE : FALSE;
+    }
+
+    public function existInFillable($variableName) {
+        return (in_array($variableName, $this->fillable)) ? TRUE : FALSE;
     }
 
     public function addSourcePrefix($value) {
         return $this->source . "." . $value;
+    }
+
+    /*
+     * relations
+     */
+
+    public function getRelationManager() {
+        return new ModelAdapterRelationManager($this);
     }
 
     /*
@@ -71,6 +115,10 @@ class ModelAdapter implements \Interfaces\iModelAdapter {
         return $this->casts;
     }
 
+    function getFillableFields() {
+        return $this->fillable;
+    }
+
     function setSource($source) {
         $this->source = $source;
     }
@@ -89,6 +137,10 @@ class ModelAdapter implements \Interfaces\iModelAdapter {
 
     function setCasts($casts) {
         $this->casts = $casts;
+    }
+
+    function setFillableFields($fillableFields) {
+        $this->fillable = $fillableFields;
     }
 
 }

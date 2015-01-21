@@ -59,13 +59,13 @@ class ModelAdapterManager {
      * @return ModelAdapter
      * @throws \Exception
      */
-    public function createNewFromFile($name, $pathToConfigFile) {
+    public static function createNewFromFile($name, $pathToConfigFile) {
         if (!file_exists("{$pathToConfigFile}")) {
             throw new \Exception("The config file doesn't exist !");
         }
 
         $adapterConfig = require_once "{$pathToConfigFile}";
-        return $this->createNewFromArray($name, $adapterConfig);
+        return self::createNewFromArray($name, $adapterConfig);
     }
 
     /**
@@ -84,6 +84,34 @@ class ModelAdapterManager {
         $adapterConfigArray = require_once "{$pathToConfigFile}";
 
         return self::createManyFromArray($adapterConfigArray);
+    }
+
+    public static function createManyFromDirectory($directoryPath) {
+
+        if (!file_exists($directoryPath)) {
+            throw new \Exception("The following directory doesn't exits ! {$directoryPath}");
+        }
+
+        foreach (new \DirectoryIterator($directoryPath) as $fileInfo) {
+            if ($fileInfo->isDot())
+                continue;
+
+            if ($fileInfo->isFile()) {
+                $name = $fileInfo->getBasename('.' . $fileInfo->getExtension());
+                $filePath = $fileInfo->getPathname();
+
+//                $data = [
+//                    "name" => $name,
+//                    "path" => $filePath,
+//                ];
+//
+//                echo '<pre>';
+//                print_r($data);
+//                echo '</pre>';
+
+                self::createNewFromFile($name, $filePath);
+            }
+        }
     }
 
 }
